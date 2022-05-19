@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Carbon\Carbon;
 
 class UpdateBookRequest extends FormRequest
 {
@@ -14,7 +15,7 @@ class UpdateBookRequest extends FormRequest
      */
     public function authorize()
     {
-        return Auth::check();
+        return true;
     }
 
     /**
@@ -25,14 +26,13 @@ class UpdateBookRequest extends FormRequest
     public function rules()
     {
         return [
-            // 'title' => ['required', 'string', 'unique:books,title,'.$this->id ],
-            // 'price' => ['required', 'integer', 'min:0', 'max:99900'],
-            // // 'available' => $this->faker->boolean(),
-            // 'available' => ['required', 'boolean'],
-            // 'author_id' => ['required', 'string', ''],
-            // 'category_id' => Category::all()->random()->category_id,
-            // 'language_id' => Language::all()->random()->language_id,
-            // 'publication_year' => $this->faker->year()
+            'title' => ['required', 'string', Rule::unique('books')->ignore($this->book), 'min:8'],
+            'price' => ['required', 'integer', 'min:0', 'max:99900'],
+            'available' => ['required', 'boolean'],
+            'author_id' => ['required', 'integer', 'exists:authors'],
+            'category_id' => ['required', 'integer', 'exists:categories'],
+            'language_id' => ['required', 'integer', 'exists:languages'],
+            'publication_year' => ['required', 'integer', 'digits:4', 'min:1900', 'max:'. Carbon::now()->year],
         ];
     }
 }

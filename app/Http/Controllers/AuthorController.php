@@ -87,7 +87,7 @@ class AuthorController extends Controller
         
         $author->update($validated) ;
 
-        return response()->json($author, 205) ;
+        return response()->json($author->refresh(), 205) ;
     }
 
     /**

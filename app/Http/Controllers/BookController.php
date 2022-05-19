@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
+use Carbon\Carbon;
 
 class BookController extends Controller
 {
@@ -36,7 +37,20 @@ class BookController extends Controller
      */
     public function store(StoreBookRequest $request)
     {
-        //
+        // {
+        //     "title": "What's Love!" ,
+        //     "price": 10000,
+        //     "available": true,
+        //     "author_id": 6,
+        //     "category_id": 41,
+        //     "language_id": 61,
+        //     "publication_year": 2022
+        // }
+        $request['created_at'] = Carbon::now();
+
+        $book = Book::create($request->all()) ;
+
+        return response()->json($book, 201) ;
     }
 
     /**
@@ -70,7 +84,12 @@ class BookController extends Controller
      */
     public function update(UpdateBookRequest $request, Book $book)
     {
-        //
+        // return $request;
+        $request['updated_at'] = Carbon::now();
+        
+        $book->update($request->all()) ;
+
+        return response()->json($book, 205) ;
     }
 
     /**
@@ -81,6 +100,10 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
-        //
+        $book->delete() ;
+
+        return response()->json([
+            'message' => "Book deleted successfully!"
+        ],204);
     }
 }

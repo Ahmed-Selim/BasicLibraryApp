@@ -13,6 +13,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $primaryKey = 'user_id';
+    protected $with = ['borrowedBooks'];
 
     /**
      * The attributes that are mass assignable.
@@ -43,4 +44,10 @@ class User extends Authenticatable
     // protected $casts = [
     //     'email_verified_at' => 'datetime',
     // ];
+
+    public function borrowedBooks()
+    {
+        return $this->hasManyThrough(Book::class, Borrow::class, 'user_id', 'book_id', 'user_id', 'book_id')
+            ->whereNull('return_date');
+    }
 }
