@@ -10,7 +10,7 @@ class Book extends Model
     use HasFactory;
 
     protected $primaryKey = 'book_id';
-    protected $with = ['category', 'language'];
+    // protected $with = ['category', 'language', 'author'];
 
     protected $fillable = [
         'title' ,
@@ -27,7 +27,7 @@ class Book extends Model
 
     public function author()
     {
-        return $this->belongsTo(Author::class, 'author_id');
+        return $this->belongsTo(Author::class, 'author_id', 'author_id');
     }
 
     public function category()

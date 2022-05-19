@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class Borrow extends Pivot
 {
     protected $primaryKey = 'borrow_id';
-    protected $with = ['book', 'borrower'];
+    // protected $with = ['book', 'borrower'];
 
     protected $fillable = [
         'user_id' ,

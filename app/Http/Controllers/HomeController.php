@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Borrow;
+use App\Models\Book;
 
 class HomeController extends Controller
 {
@@ -23,6 +27,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $borrowedBooksId = Borrow::where('user_id', '=', Auth::user()->user_id)-> whereNull('return_date')->pluck('book_id') ;
+        $booksToBorrow = Book::whereNotIn('book_id', $borrowedBooksId)->where('available', 1)->get() ;
+        
+        return view('home', [
+            'books' => $booksToBorrow
+        ]);
     }
 }

@@ -6,6 +6,10 @@ use App\Models\Book;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Models\Borrow;
 
 class BookController extends Controller
 {
@@ -16,7 +20,15 @@ class BookController extends Controller
      */
     public function index()
     {
-        return response()->json(Book::all(), 200);
+        if (Route::currentRouteName() == null)
+            return response()->json(Book::all(), 200);
+
+        $borrowedBooksId = Borrow::where('user_id', '=', Auth::user()->user_id)-> whereNull('return_date')->pluck('book_id') ;
+        $booksToBorrow = Book::whereNotIn('book_id', $borrowedBooksId)->where('available', 1)->get() ;
+        
+        return view('books.index', [
+            'books' => $booksToBorrow
+        ]);
     }
 
     /**
@@ -50,7 +62,8 @@ class BookController extends Controller
 
         $book = Book::create($request->all()) ;
 
-        return response()->json($book, 201) ;
+        if (Route::currentRouteName() == null)
+            return response()->json($book, 201) ;
     }
 
     /**
@@ -61,7 +74,9 @@ class BookController extends Controller
      */
     public function show(Book $book)
     {
-        return response()->json($book, 200);
+        if (Route::currentRouteName() == null)
+            return response()->json($book, 200);
+        return view('books.show') ;  
     }
 
     /**
@@ -89,7 +104,8 @@ class BookController extends Controller
         
         $book->update($request->all()) ;
 
-        return response()->json($book, 205) ;
+        if (Route::currentRouteName() == null)
+            return response()->json($book, 205) ;
     }
 
     /**
@@ -102,8 +118,9 @@ class BookController extends Controller
     {
         $book->delete() ;
 
-        return response()->json([
-            'message' => "Book deleted successfully!"
-        ],204);
+        if (Route::currentRouteName() == null)
+            return response()->json([
+                'message' => "Book deleted successfully!"
+            ],204);
     }
 }

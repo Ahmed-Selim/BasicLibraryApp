@@ -6,6 +6,7 @@ use App\Models\Author;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Route;
 
 class AuthorController extends Controller
 {
@@ -44,8 +45,8 @@ class AuthorController extends Controller
         $validated['created_at'] = Carbon::now();
         // return $validated ;
         $author = Author::create($validated) ;
-
-        return response()->json($author, 201) ;
+        if (Route::currentRouteName() == null)
+            return response()->json($author, 201) ;
     }
 
     /**
@@ -56,6 +57,8 @@ class AuthorController extends Controller
      */
     public function show(Author $author)
     {
+        if (Route::currentRouteName() == null)
+            return response()->json($author, 200);
         return response()->json($author, 200);
     }
 
@@ -87,7 +90,8 @@ class AuthorController extends Controller
         
         $author->update($validated) ;
 
-        return response()->json($author->refresh(), 205) ;
+        if (Route::currentRouteName() == null)
+            return response()->json($author->refresh(), 205) ;
     }
 
     /**
@@ -100,8 +104,9 @@ class AuthorController extends Controller
     {
         $author->delete() ;
 
-        return response()->json([
-            'message' => "Author deleted successfully!"
-        ],204);
+        if (Route::currentRouteName() == null)
+            return response()->json([
+                'message' => "Author deleted successfully!"
+            ],204);
     }
 }

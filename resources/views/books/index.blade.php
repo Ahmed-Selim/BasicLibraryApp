@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
+<div class=container-fluid>
     <div class="row justify-content-center">
         <div class="">
             <div class="card">
@@ -39,14 +39,21 @@
                                         <td>
                                             <form method="post" action="{{ route('borrow.store') }}">
                                                 @csrf
-                                                <input type="hidden" name="user_id" value="{{ Auth::user()->user_id }}" >
                                                 <input type="hidden" name="book_id" value="{{ $book->book_id }}" >
-                                                <input type="submit" class="btn btn-outline-primary" value="Borrow +">
+                                                <input type="submit" class="btn btn-outline-primary" value="+ Borrow">
                                             </form>
                                         </td>
-                                    </tr>    
-                                
+                                    </tr>
                                 @endforeach
+
+                                
+                                @if ($books->isEmpty())
+                                    <tr class="text-center">
+                                        <td colspan="8">
+                                            No Books to borrow yet!
+                                        </td>
+                                    </tr>
+                                @endif
                             </tbody>
                     </table>
                 </div>

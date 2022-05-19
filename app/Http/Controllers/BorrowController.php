@@ -10,6 +10,8 @@ use App\Models\User;
 use App\Models\Book;
 use Carbon\Carbon;
 use App\Http\Requests\UpdateBookBorrowRequest;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 class BorrowController extends Controller
 {
@@ -20,7 +22,21 @@ class BorrowController extends Controller
      */
     public function index()
     {
-        return response()->json(Borrow::all(), 200);
+        if (Route::currentRouteName() == null)
+            return response()->json(Borrow::all(), 200);
+
+            // $borrowedBooks = Book::find(
+            //     Borrow::where('user_id', '=', Auth::user()->user_id)
+            //             ->whereNull('return_date')
+            //             ->pluck('book_id')
+            // );
+            
+            $borrows = Borrow::with('book')->where('user_id', '=', Auth::user()->user_id)
+                        ->whereNull('return_date')->get();
+    
+            return view('borrows.index', [
+                'borrows' => $borrows
+            ]);
     }
 
     /**
@@ -54,7 +70,10 @@ class BorrowController extends Controller
             $borrow = Borrow::create($request->all()) ;
         });
 
-        return response()->json($borrow, 201) ;
+        if (Route::currentRouteName() == null)
+            return response()->json($borrow, 201) ;
+
+        return redirect()->route('home');
     }
 
     /**
@@ -65,7 +84,8 @@ class BorrowController extends Controller
      */
     public function show(Borrow $borrow)
     {
-        return response()->json($borrow, 200);
+        if (Route::currentRouteName() == null)
+            return response()->json($borrow, 200);
     }
 
     /**
@@ -88,6 +108,7 @@ class BorrowController extends Controller
      */
     public function update(UpdateBookBorrowRequest $request, Borrow $borrow)
     {
+
         DB::transaction(function () use ($request, &$borrow) {
             // $user = User::find($request->user_id);
             $book = Book::find($request->book_id);
@@ -101,7 +122,10 @@ class BorrowController extends Controller
             $borrow->update($request->all()) ;
         });
 
-        return response()->json($borrow->refresh(), 205) ;
+        if (Route::currentRouteName() == null)
+            return response()->json($borrow->refresh(), 205) ;
+
+        return redirect()->route('borrow.index');
     }
 
     /**
@@ -114,8 +138,9 @@ class BorrowController extends Controller
     {
         $borrow->delete() ;
 
-        return response()->json([
-            'message' => "Borrow Record deleted successfully!"
-        ],204);
+        if (Route::currentRouteName() == null)
+            return response()->json([
+                'message' => "Borrow Record deleted successfully!"
+            ],204);
     }
 }
