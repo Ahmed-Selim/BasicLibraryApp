@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\BookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +19,18 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+// Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::controller(AuthorController::class)->group(function () {
+    Route::get('/authors', 'index');
+    Route::get('/authors/{author}', 'show');
+    Route::post('/authors', 'store');
+});
+
+Route::controller(BookController::class)->group(function () {
+    Route::get('/books', 'index');
+    Route::get('/books/{book}', 'show');
+    Route::post('/books', 'store');
+});

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Author;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 
 class AuthorController extends Controller
 {
@@ -14,7 +16,7 @@ class AuthorController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(Author::all(), 200);
     }
 
     /**
@@ -35,7 +37,15 @@ class AuthorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'author_name' => 'required|string|max:255',
+            'author_email' => 'required|email|unique:authors',
+        ]);
+        $validated['created_at'] = Carbon::now();
+        // return $validated ;
+        $author = Author::create($validated) ;
+
+        return response()->json($author, 201) ;
     }
 
     /**
@@ -46,7 +56,7 @@ class AuthorController extends Controller
      */
     public function show(Author $author)
     {
-        //
+        return response()->json($author, 200);
     }
 
     /**
@@ -69,7 +79,15 @@ class AuthorController extends Controller
      */
     public function update(Request $request, Author $author)
     {
-        //
+        $validated = $request->validate([
+            'author_name' => 'required|string|max:255',
+            'author_email' => ['required', 'email', Rule::unique('authors')->ignore($author)]
+        ]);
+        $validated['updated_at'] = Carbon::now();
+        
+        $author->update($validated) ;
+
+        return response()->json($author, 205) ;
     }
 
     /**
@@ -80,6 +98,10 @@ class AuthorController extends Controller
      */
     public function destroy(Author $author)
     {
-        //
+        $author->delete() ;
+
+        return response()->json([
+            'message' => "Author deleted successfully!"
+        ],204);
     }
 }

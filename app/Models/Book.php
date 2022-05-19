@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Book extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'book_id';
+    // protected $with = ['author'];
+
+
+    public function author()
+    {
+        return $this->belongsTo(Author::class, 'author_id');
+    }
 }

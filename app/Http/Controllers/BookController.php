@@ -15,7 +15,7 @@ class BookController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(Book::all(), 200);
     }
 
     /**
@@ -47,7 +47,7 @@ class BookController extends Controller
      */
     public function show(Book $book)
     {
-        //
+        return response()->json($book, 200);
     }
 
     /**

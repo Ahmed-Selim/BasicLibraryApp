@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateBookRequest extends FormRequest
 {
@@ -13,7 +14,7 @@ class UpdateBookRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return Auth::check();
     }
 
     /**
@@ -24,7 +25,14 @@ class UpdateBookRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            // 'title' => ['required', 'string', 'unique:books,title,'.$this->id ],
+            // 'price' => ['required', 'integer', 'min:0', 'max:99900'],
+            // // 'available' => $this->faker->boolean(),
+            // 'available' => ['required', 'boolean'],
+            // 'author_id' => ['required', 'string', ''],
+            // 'category_id' => Category::all()->random()->category_id,
+            // 'language_id' => Language::all()->random()->language_id,
+            // 'publication_year' => $this->faker->year()
         ];
     }
 }
